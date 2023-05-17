@@ -10,6 +10,7 @@ exports.userList = async (req,res)=>{
     }
 }
 
+
 // 회원가입
 exports.Signup = async (req,res)=>{
     const { user_id, user_pw } = req.body;

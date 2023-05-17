@@ -10,8 +10,10 @@ const dot = require("dotenv").config();
 const jwt = require('jsonwebtoken');
 
 router.post("/login", (req,res)=>{
-    const name = "weeji";
+    const name = "mr.hong";
     const key = process.env.KEY;
+
+    //토큰을 생성하여 'token'변수에 담는다.
     let token = jwt.sign({
         type : "JWT",
         name : name,
@@ -21,6 +23,7 @@ router.post("/login", (req,res)=>{
         // 토큰 발급자
         issuer : name
     } )
+    // 요청받은 세션의 토큰에는 token이 담긴다.
     req.session.token = token;
     res.render("page2");
 })

@@ -31,7 +31,8 @@ app.use(session({
     // 세션이 변경되거나 저장할 때나 불러올 때 다시 저장할지 여부를 결정
     resave : false,
     // 세션을 저장할 때 초기화할지 여부를 결정
-    saveUninitialized : true
+    saveUninitialized : true,
+    name : "session-cookie"
 }));
 
 app.use(pageRouter);

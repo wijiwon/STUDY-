@@ -63,7 +63,6 @@ app.set("view engine", "ejs");
 const user = {
     id: "weee",
     pw: "123"
-
 }
 
 app.get('/',(req,res)=>{
@@ -71,7 +70,7 @@ app.get('/',(req,res)=>{
 })
 
 app.post("/login", (req,res)=>{
-    // 요청 갹채의 body에 user_id, user_pw를 구조분해할당으로 가져옴
+    // 요청 객채의 body에 user_id, user_pw를 구조분해할당으로 가져옴
     const {user_id, user_pw} = req.body;
     if(user_id === user.id && user_pw === user.pw){
         // access token 발급
@@ -81,13 +80,15 @@ app.post("/login", (req,res)=>{
         }, process.env.ACCESS_TOKEN_KEY,{
             expiresIn : "20s"
         });
+        // refresh token 발급
         const refreshToken = jwt.sign({
             id : user.id
         }, process.env.REFRESH_TOKEN_KEY,{
             expiresIn : "1d"
         })
         //쿠키 생성
-        res.cookie("refresh", refreshToken, {maxAge : 24 * 60 * 60 * 1000});
+        //refresh_token이라는 이름의 refreshToken의 값이 담긴 쿠기가 생성되고 이 쿠키의 만료시간은 1일이다.
+        res.cookie("refresh_token", refreshToken, {maxAge : 24 * 60 * 60 * 1000});
         res.render("join", {AccessToken});
     }
 })
@@ -95,11 +96,13 @@ app.post("/login", (req,res)=>{
 app.post("/refresh", (req,res)=>{
     // 옵션 체이닝. 뒤에 오는 키값이 있는지 먼저 확인하고 값을 호출해서 반환
     // 그래서 크래쉬 방지
-    if(req.cookies?.refresh){
-        const refreshToken = req.cookies.refresh;
+    if(req.cookies?.refresh_token){
+        // console.log("쿠키",req.cookies)
+        const refreshToken = req.cookies.refresh_token;
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY, (err, decode)=>{
             // err가 있으면 다시 로그인 하세요!
             if(err){
+                // 쿠키에 refresh_token이 존재하지만, 그 값이 변조되었을 경우
                 res.send("로그인을 다시 해주세요!");
             }
             else{
@@ -112,6 +115,7 @@ app.post("/refresh", (req,res)=>{
             };
         })
     }
+    // 쿠키에 refresh_token 자체가 없거나 값이 없을 경우
     else{
         res.send("로그인 해주세요!")
     }

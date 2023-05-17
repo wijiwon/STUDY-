@@ -3,6 +3,7 @@ const dot = require("dotenv").config();
 const jwt = require('jsonwebtoken');
 
 router.post('/', (req,res)=>{
+    console.log(req.session.token);
     const token = req.session.token;
     // 토큰이 유효한지 검증
     // verify(): 토큰이 유효한지 검증하는 메소드
